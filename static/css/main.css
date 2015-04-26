@@ -1,5 +1,6 @@
 /*! HTML5 Boilerplate v5.0 | MIT License | http://h5bp.com/ */
-@import url(http://fonts.googleapis.com/css?family=Montserrat:700);
+@import url(http://fonts.googleapis.com/css?family=Montserrat:700,400);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300);
 
 html {
     color: #222;
@@ -155,10 +156,73 @@ nav a:hover {
    Author's custom styles
    ========================================================================== */
 
-.tl { position: absolute; top: 0; left: 0; right: 50%; bottom: 50%; background: #F41C54; }
-.tr { position: absolute; top: 0; left: 50%; right: 0; bottom: 50%; background: #FF9F00; }
-.bl { position: absolute; top: 50%; left: 0; right: 50%; bottom: 0; background: #00AAB5; }
-.br { position: absolute; top: 50%; left: 50%; right: 0; bottom: 0; background: #A8CF12; }
+.pink { background: #F41C54; }
+.orange { background: #FF9F00; }
+.blue { background: #00AAB5; }
+.green { background: #A8CF12; }
+
+.black1 { background: #010712; }
+.black2 { background: #13171F; }
+.black3 { background: #1C1F26; }
+.black4 { background: #24262D; }
+
+.tl { position: absolute; top: 0; left: 0; right: 50%; bottom: 50%; }
+.tr { position: absolute; top: 0; left: 50%; right: 0; bottom: 50%; }
+.bl { position: absolute; top: 50%; left: 0; right: 50%; bottom: 0; }
+.br { position: absolute; top: 50%; left: 50%; right: 0; bottom: 0; }
+.full { position:absolute; top: 0; left: 0; right: 0; bottom: 0; }
+
+.tl-menu { 
+    display: none;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.tl-menu > div {
+    padding-top: 20px;
+}
+
+.tr-menu {
+    display: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-left: 20px;
+}
+
+.bl {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.bl-menu {
+    display: none;
+    padding-top: 20px;
+    padding-left: 40px;
+}
+
+.center {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.center-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.quad-quad-text {
+    text-align: -webkit-center;
+
+    /* shadow */
+    text-shadow: 1px 1px 2px rgba(50, 50, 50, 1);
+
+    /* font */
+    color: #eeeeee;
+    font-family: 'Montserrat', sans-serif;
+    font-wieght: 400;
+    font-size: 16px;
+}
 
 .quad-text {
     /* center */
@@ -173,7 +237,215 @@ nav a:hover {
     /* font */
     color: #eeeeee;
     font-family: 'Montserrat', sans-serif;
-    font-size: 40px;
+    font-wieght: 700;
+    font-size: 32px;
+}
+
+
+.fileurl{
+  border:1px solid #ccc;
+  outline:none;
+  width:130px;
+  height:30px;
+  border-radius:33px;
+  margin:0 auto;
+  margin-top:20px;
+  display:block;
+  color:#eee;
+  background:#333;
+  font-family:'open sans', sans-serif;
+  font-size:19px;
+  padding-left:30px;
+  top:70px;
+  left:10px;
+}
+
+.fileurl:focus{
+  box-shadow: 0 0 8px rgba(72, 193, 249, .4);
+}
+
+.fileurl ::-webkit-input-placeholder{
+  color:rgba(200,200,200,.5);
+}
+
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+input {
+    width: 0px;
+    height: 0px;
+    overflow: hidden;
+}
+
+.button2 {
+  display: block;
+  font-size: 16px;
+  text-align: center;
+  line-height: 40px;
+  text-decoration: none;
+  color: white;
+  background-color: #3CA331;
+  border-radius: 4px;
+  position: absolute;
+  width: 180px;
+  height: 40px;
+  text-shadow: 0 -1px -1px #328829;
+  -moz-box-shadow: 0 4px 0 #328829, 0 5px 5px 1px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 0 4px 0 #328829, 0 5px 5px 1px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 0 #328829, 0 5px 5px 1px rgba(0, 0, 0, 0.4);
+  -moz-transition: all 0.15s ease-in-out;
+  -o-transition: all 0.15s ease-in-out;
+  -webkit-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
+}
+.button2:hover {
+  background-color: #43b737;
+  text-shadow: 0 -1px -1px #399b2f;
+  -moz-box-shadow: 0 4px 0 #399b2f, 0 5px 5px 1px rgba(0, 0, 0, 0.4);
+  -webkit-box-shadow: 0 4px 0 #399b2f, 0 5px 5px 1px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 0 #399b2f, 0 5px 5px 1px rgba(0, 0, 0, 0.4);
+}
+.button2:active {
+  margin-top: -16px;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+}
+
+.delete-item {
+/*    float: right; */
+    margin-right: 10px;
+    color: #35d;
+    text-decoration: none;
+}
+
+.file-list > li { 
+    cursor: move; 
+}
+
+ol.file-list {
+    color: #eeeeee;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 26px;
+}
+
+.files-title {
+    color: #eeeeee;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+}
+
+ol.file-list li.placeholder {
+    position: relative;
+/** More li styles **/
+}
+ol.file-list li.placeholder:before {
+    position: absolute;
+/** Define arrowhead **/
+}
+
+.format-list {
+  margin: 0 auto;
+  list-style-type: none;
+  text-align: center;
+}
+
+.format-list li {
+  padding: 10px;
+  font-family: helvetica;
+  color: #fff;
+  font-weight: lighter;
+  font-size: 28px;
+  line-height: 28px;
+  margin: 2px;
+  padding: 20px 30px;
+  float: left;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.1s ease, padding 0.1s ease;
+}
+
+.format-list li:after {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 0;
+  width: 0;
+  opacity: 0;
+  white-space: nowrap;
+  transition: width 0.2s ease, opacity 0.1s ease;
+  /* pill */
+  box-sizing: border-box;
+  background-color: rgba(0,0,0,0.1);
+  padding: 5px 0 2px;
+  border-radius: 4px;  
+  line-height: 1;
+  border: 1px solid rgba(0,0,0,0.04)
+  /**/
+}
+
+.format-list li:hover {
+  position: relative;
+  z-index: 2;
+  opacity: 1;
+  padding-left: 35px;
+  padding-right: 35px;
+}
+
+.format-list li:hover:after {
+  margin-left: 15px;
+  width: 82px;
+  opacity: 1;
+}
+
+.format-list .format-bmp {
+  background: #F6672E;
+}
+
+.format-list .format-gif {
+  background-color: #009BD4;
+}
+
+.format-list .format-ico {
+  background-color: #9FC53A;
+}
+
+.format-list .format-jpg {
+  background-color: #FFB200;
+}
+
+.format-list .format-pcx {
+  background-color: #8F5A9F;
+}
+
+.format-list .format-pdf {
+  background-color: #4EC9BE;
+}
+
+.format-list .format-ps {
+  background-color: #B7AEAC;
+}
+
+.format-list .format-tga {
+  background-color: #3A537C;
 }
 
 /* ==========================================================================
