@@ -55,24 +55,22 @@ function hideUploadFiles() {
     $('.tl-menu').hide();
 }
 
+function getCurrentFileTypes() {
+    var fileTypes = '';
+    var lis = $('.file-list > li');
+    for (var i = 0; i < lis.length; i = i+1) {
+	fileTypes = fileTypes + (lis.attr('filetype')) + ',';
+    }
+    fileTypes = fileTypes.slice(0,-1);
+    return fileTypes;
+}
+
 function showFiles(files) {
     $('body > .tr > .quad-text').hide();
     $('.tr-menu').show();
-    var fileTypes = '';
     for (var i = 0; i < files.length; i = i + 1) {
 	console.log(files[i]);
-
 	var typeStr = files[i].type.replace('/', '-');
-	if (typeStr) {
-	    fileTypes = fileTypes + files[i].type + ",";
-	} else {
-	    if (files[i].name.indexOf('.') >= 0) {
-		fileTypes = fileTypes + files[i].name.split('.')[1] + ",";		
-	    } else {
-		fileTypes = fileTypes + "ERR" + ",";
-	    }
-	}
-
 	var imgUrl = 'http://darvin.github.io/mimetype-icon/Icons/Icons/32_' + typeStr + '.png'
 	if (files[i].type === '') {
 	    imgUrl = 'static/img/file.png';
@@ -80,15 +78,17 @@ function showFiles(files) {
 
 	var imgElem = '<img src="' + imgUrl + '"/> '
 	var delElem = '<a href="" class="delete-item">×</a>'
-	$('.file-list').append('<li>' + delElem + imgElem + files[i].name + '</li>');
+	$('.file-list').append('<li filetype="' + 
+			       files[i].type + '">' + delElem + 
+			       imgElem + files[i].name + '</li>');
     }
-    fileTypes = fileTypes.slice(0, -1);
+    var fileTypes = getCurrentFileTypes();
     if (files.length > 0) {
 	console.log(fileTypes);
 	$.post('/api/formats', fileTypes, function(data) {
 	    console.log('got data');
 	    console.log(data.split(','));
-	    showFormats();
+	    showFormats(data.split(','));
 	});
     } else {
 	hideFormats();
@@ -99,7 +99,12 @@ function showFiles(files) {
 	    hideFiles();
 	    hideFormats();
 	} else {
-	    showFormats();
+	    var fileTypes = getCurrentFileTypes();
+	    $.post('/api/formats', fileTypes, function(data) {
+		console.log('got data');
+		console.log(data.split(','));
+		showFormats(data.split(','));
+	    });
 	}
 	return false;
     });
@@ -110,9 +115,59 @@ function hideFiles() {
     $('.tr-menu').hide();
 }
 
-function showFormats() {
+function showFormats(formats) {
     $('body > .bl > .quad-text').hide();
     $('.bl-menu').show();
+    $('.format-list').empty();
+    for (var i = 0; i < formats.length; i = i+1) {
+	var format = formats[i];
+
+	var name = format.split('/')[1].toUpperCase();
+
+	if (name === 'POSTSCRIPT') {
+	    name = 'PS';
+	} else if (name === 'X-PCX') {
+	    name = 'PCX';
+	} else if (name === 'X-ICON') {
+	    name = 'ICO'
+	}
+	
+	var li = '<li filetype="' + format + 
+	    '" style="background:' + 
+	    colorLuminance(stringToColor(name), -0.3) + 
+	    '">' + name + '</li>';
+	$('.format-list').append(li);
+    }
+}
+
+function colorLuminance(hex, lum) {
+	// validate hex string
+	hex = String(hex).replace(/[^0-9a-f]/gi, '');
+	if (hex.length < 6) {
+		hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+	}
+	lum = lum || 0;
+
+	// convert to decimal and change luminosity
+	var rgb = "#", c, i;
+	for (i = 0; i < 3; i++) {
+		c = parseInt(hex.substr(i*2,2), 16);
+		c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+		rgb += ("00"+c).substr(c.length);
+	}
+
+	return rgb;
+}
+
+function stringToColor(str) {
+    str += str + 'almao' + str;
+    // str to hash
+    for (var i = 0, hash = 0; i < str.length; hash = str.charCodeAt(i++) + ((hash << 5) - hash));
+
+    // int/hash to hex
+    for (var i = 0, colour = "#"; i < 3; colour += ("00" + ((hash >> i++ * 8) & 0xFF).toString(16)).slice(-2));
+
+    return colour;
 }
 
 function hideFormats() {
