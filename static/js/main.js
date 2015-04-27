@@ -14,19 +14,27 @@ $(function() {
     $("ol.file-list").sortable()
 });
 
-$( ".tl" ).mouseover(function() {
+$('.browse-options-text').click(function () {
+    $('.tl-menu > .full').addClass("tl");
+    $('.tl-menu > .full').removeClass("full");
+    $('.browse-options-text').hide();
+    $('.button2').text('Browse');
+    return false; 
+});
+
+$( "body > .tl" ).mouseover(function() {
     showUploadFiles();
 });
 
-$( ".tr" ).mouseover(function() {
+$( "body > .tr" ).mouseover(function() {
     hideUploadFiles();
 });
 
-$( ".bl" ).mouseover(function() {
+$( "body > .bl" ).mouseover(function() {
     hideUploadFiles();
 });
 
-$( ".br" ).mouseover(function() {
+$( "body > .br" ).mouseover(function() {
     hideUploadFiles();
 });
 
@@ -36,42 +44,19 @@ $('.button2').click(function() {
 });
 
 
-function adjustTLMenu() {
-    var h1 = $('.tl-menu > .tl div').height()
-    var h2 = $('.tl-menu > .tl').height()
-    var mtop = (h2 - h1)/2;
-    $('.tl-menu > .tl div').css('margin-top', mtop + 'px')
-
-    h1 = $('.tl-menu > .tr div').height()
-    h2 = $('.tl-menu > .tr').height()
-    mtop = (h2 - h1)/2;
-    $('.tl-menu > .tr div').css('margin-top', mtop + 'px')
-
-    h1 = $('.tl-menu > .bl div').height()
-    h2 = $('.tl-menu > .bl').height()
-    mtop = (h2 - h1)/2;
-    $('.tl-menu > .bl div').css('margin-top', mtop + 'px')
-
-    h1 = $('.tl-menu > .br div').height()
-    h2 = $('.tl-menu > .br').height()
-    mtop = (h2 - h1)/2;
-    $('.tl-menu > .br div').css('margin-top', mtop + 'px')
-
-}
-
 function showUploadFiles() {
-    $('.tl > .quad-text').hide();
+    $('body > .tl > .quad-text').hide();
     $('.tl-menu').show();
 }
 
 
 function hideUploadFiles() {
-    $('.tl > .quad-text').show();
+    $('body > .tl > .quad-text').show();
     $('.tl-menu').hide();
 }
 
 function showFiles(files) {
-    $('.tr > .quad-text').hide();
+    $('body > .tr > .quad-text').hide();
     $('.tr-menu').show();
     var fileTypes = '';
     for (var i = 0; i < files.length; i = i + 1) {
@@ -100,9 +85,9 @@ function showFiles(files) {
     fileTypes = fileTypes.slice(0, -1);
     if (files.length > 0) {
 	console.log(fileTypes);
-	$.post('/api/formats', {'formats': fileTypes}, function(data) {
+	$.post('/api/formats', fileTypes, function(data) {
 	    console.log('got data');
-	    console.log(data);
+	    console.log(data.split(','));
 	    showFormats();
 	});
     } else {
@@ -121,16 +106,16 @@ function showFiles(files) {
 }
 
 function hideFiles() {
-    $('.tr > .quad-text').show();
+    $('body > .tr > .quad-text').show();
     $('.tr-menu').hide();
 }
 
 function showFormats() {
-    $('.bl > .quad-text').hide();
+    $('body > .bl > .quad-text').hide();
     $('.bl-menu').show();
 }
 
 function hideFormats() {
-    $('.bl > .quad-text').show();
+    $('body > .bl > .quad-text').show();
     $('.bl-menu').hide();
 }
