@@ -1,12 +1,12 @@
+var files = [];
+
 $(function() {
 
     $('#file').change(function (e) {
 	if (e && e.target && e.target.files[0]) {
-	    showFiles(e.target.files);
-	    $('.tl').unbind('mouseover');
-	    $('.tr').unbind('mouseover');
-	    $('.bl').unbind('mouseover');
-	    $('.br').unbind('mouseover');
+	    files = e.target.files;
+	    showFiles(files);
+	    showBrowseOptions();
 	}
 	return false;
     });
@@ -15,12 +15,22 @@ $(function() {
 });
 
 $('.browse-options-text').click(function () {
+    showBrowseOptions();
+    return false; 
+});
+
+function showBrowseOptions() {
     $('.tl-menu > .full').addClass("tl");
     $('.tl-menu > .full').removeClass("full");
     $('.browse-options-text').hide();
     $('.button2').text('Browse');
-    return false; 
-});
+    $('.tl-menu > .tl').removeClass('pink');
+    $('.tl-menu > .tl').addClass('black1');
+    $('.tl').unbind('mouseover');
+    $('.tr').unbind('mouseover');
+    $('.bl').unbind('mouseover');
+    $('.br').unbind('mouseover');
+}
 
 $( "body > .tl" ).mouseover(function() {
     showUploadFiles();
@@ -42,7 +52,6 @@ $('.button2').click(function() {
     $('#file').click();
     return false;
 });
-
 
 function showUploadFiles() {
     $('body > .tl > .quad-text').hide();
@@ -115,6 +124,23 @@ function hideFiles() {
     $('.tr-menu').hide();
 }
 
+function convertFilesTo(fileType) {
+    console.log('converting files to ' + fileType);
+    var data = new FormData();
+    data.append('file', files[0])
+    jQuery.ajax({
+	url: '/api/convert',
+	data: data,
+	cache: false,
+	contentType: false,
+	processData: false,
+	type: 'POST',
+	success: function(data){
+	    console.log(data);
+	}
+    }); 
+}
+
 function showFormats(formats) {
     $('body > .bl > .quad-text').hide();
     $('.bl-menu').show();
@@ -138,6 +164,10 @@ function showFormats(formats) {
 	    '">' + name + '</li>';
 	$('.format-list').append(li);
     }
+    $('.format-list > li').click(function () {
+	var fileType = $(this).attr('filetype');
+	convertFilesTo(fileType)
+    });
 }
 
 function colorLuminance(hex, lum) {

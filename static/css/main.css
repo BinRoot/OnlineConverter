@@ -159,7 +159,8 @@ nav a:hover {
 .pink { background: #F41C54; }
 .orange { background: #FF9F00; }
 .blue { background: #00AAB5; }
-.green { background: #A8CF12; }
+/*.green { background: #A8CF12; }*/
+.green { background: #05B64B; }
 
 .black1 { background: #010712; }
 .black2 { background: #13171F; }
@@ -224,13 +225,13 @@ nav a:hover {
 }
 
 .browse-options-text {
-    color: #888888;
+    color: #eeeeee;
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
-    font-size: 10px;
+    font-size: 12px;
 
     /* shadow */
-    text-shadow: 1px 1px 2px rgba(50, 50, 50, 1);
+    text-shadow: 1px 1px 2px rgba(50, 50, 50, 0);
 
     position: absolute;
     margin-top:60px;

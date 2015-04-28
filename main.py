@@ -1,10 +1,16 @@
 import os
 from flask import Flask
 from flask import request
+from flask import url_for
+from flask import redirect
 import urllib 
 from sets import Set
+from werkzeug import secure_filename
 
 app = Flask(__name__)
+
+UPLOAD_FOLDER = 'uploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 formatMap = {
     'image/jpg': [
@@ -63,3 +69,13 @@ def getFormats(formats):
             
     return list(candidates)
 
+
+@app.route('/api/convert', methods=['POST'])
+def convert():
+    cwd = os.path.getcwd()
+    fil = request.files['file']
+    filename = secure_filename(fil.filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    fil.save(filepath)
+#    return redirect(url_for('uploaded_file', filename=filename))
+    return filepath
