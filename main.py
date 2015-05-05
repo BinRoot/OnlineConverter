@@ -6,34 +6,58 @@ from flask import redirect
 import urllib 
 from sets import Set
 from werkzeug import secure_filename
+import mimetypes
+mimetypes.init()
 
 app = Flask(__name__)
 
 UPLOAD_FOLDER = 'uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-formatMap = {
-    'image/jpg': [
-        {'to': 'application/pdf', 'script': 'JPG_2_PDF'},
-        {'to': 'application/postscript', 'script': 'JPG_2_PS'},
-        {'to': 'image/bmp', 'script': 'JPG_2_BMP'},
-        {'to': 'image/gif', 'script': 'JPG_2_GIF'},
-        {'to': 'image/png', 'script': 'JPG_2_PNG'},
-        {'to': 'image/tiff', 'script': 'JPG_2_TIFF'},
-        {'to': 'image/x-icon', 'script': 'JPG_2_ICO'},
-        {'to': 'image/x-pcx', 'script': 'JPG_2_PCX'},
-    ],
-    'image/png': [
-        {'to': 'application/pdf', 'script': 'PNG_2_PDF'},
-        {'to': 'application/postscript', 'script': 'PNG_2_PS'},
-        {'to': 'image/bmp', 'script': 'PNG_2_BMP'},
-        {'to': 'image/gif', 'script': 'PNG_2_GIF'},
-        {'to': 'image/jpeg', 'script': 'PNG_2_PNG'},
-        {'to': 'image/tiff', 'script': 'PNG_2_TIFF'},
-        {'to': 'image/x-icon', 'script': 'PNG_2_ICO'},
-        {'to': 'image/x-pcx', 'script': 'PNG_2_PCX'},
-    ]
-}
+imgCircle = [
+    'application/pdf',
+    'application/postscript',
+    'image/bmp', # image/x-ms-bmp
+    'image/gif',
+    'image/jpeg',
+    'image/png',
+    'image/tiff',
+    'image/x-icon', # image/vnd.microsoft.icon
+    'image/x-rgb',
+    'image/webp' # err
+]
+
+formatMap = {}
+
+def getFileExtension(imgType):
+    if imgType == 'image/bmp':
+        return '.bmp'
+    elif imgType == 'image/x-icon':
+        return '.ico'
+    elif imgType == 'image/webp':
+        return '.webp'
+    elif imgType == 'image/jpeg':
+        return '.jpg'
+    elif imgType == 'application/postscript':
+        return '.ps'
+    else:
+        guess = mimetypes.guess_extension(imgType)
+        if guess == None:
+            if len(imgType.split('/')) > 1:
+                return '.' + imgType.split('/')[1]
+            else:
+                return '.' + imgType
+        return guess
+
+for imgType1 in imgCircle:
+    toBlocks = []
+    for imgType2 in imgCircle:
+        if imgType1 != imgType2:
+            toBlocks.append({'to': imgType2, 'script': 'convert $1 $1{1%%.*}' + getFileExtension(imgType2)})
+    formatMap[imgType1] = toBlocks
+
+print(formatMap)
+    
 
 @app.route('/')
 def index():

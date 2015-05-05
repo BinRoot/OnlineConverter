@@ -2,6 +2,13 @@ var files = [];
 
 $(function() {
 
+    showUploadFiles();
+
+    $.post('/api/formats', '', function(data) {
+	showFormats(data.split(','));
+    });
+
+
     $('#file').change(function (e) {
 	if (e && e.target && e.target.files[0]) {
 	    files = e.target.files;
@@ -31,22 +38,6 @@ function showBrowseOptions() {
     $('.bl').unbind('mouseover');
     $('.br').unbind('mouseover');
 }
-
-$( "body > .tl" ).mouseover(function() {
-    showUploadFiles();
-});
-
-$( "body > .tr" ).mouseover(function() {
-    hideUploadFiles();
-});
-
-$( "body > .bl" ).mouseover(function() {
-    hideUploadFiles();
-});
-
-$( "body > .br" ).mouseover(function() {
-    hideUploadFiles();
-});
 
 $('.button2').click(function() {
     $('#file').click();
