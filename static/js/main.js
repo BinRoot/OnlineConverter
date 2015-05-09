@@ -4,16 +4,13 @@ $(function() {
 
     showUploadFiles();
 
-    $.post('/api/formats', '', function(data) {
-	showFormats(data.split(','));
-    });
-
+    resetFormats();
 
     $('#file').change(function (e) {
 	if (e && e.target && e.target.files[0]) {
 	    files = e.target.files;
 	    showFiles(files);
-	    showBrowseOptions();
+	    showBrowseOptionsAbridged();
 	}
 	return false;
     });
@@ -31,12 +28,24 @@ function showBrowseOptions() {
     $('.tl-menu > .full').removeClass("full");
     $('.browse-options-text').hide();
     $('.button2').text('Browse');
-    $('.tl-menu > .tl').removeClass('pink');
     $('.tl-menu > .tl').addClass('black1');
-    $('.tl').unbind('mouseover');
-    $('.tr').unbind('mouseover');
-    $('.bl').unbind('mouseover');
-    $('.br').unbind('mouseover');
+}
+
+function showBrowseOptionsAbridged() {
+    $('.browse-options-text').hide();
+    $('.button2').text('Browse');
+}
+
+
+function squeezeBrowse() {
+    $('.top-half').addClass('tl');
+    $('.top-half').removeClass('top-half');
+    $('.tr-menu').parent().show();
+}
+
+function expandBrowse() {
+    $('.tl-menu').parent()[0].addClass('top-half');
+    $('.tl-menu').parent()[0].removeClass('tl');
 }
 
 $('.button2').click(function() {
@@ -85,19 +94,21 @@ function showFiles(files) {
     var fileTypes = getCurrentFileTypes();
     if (files.length > 0) {
 	console.log(fileTypes);
+	squeezeBrowse();
 	$.post('/api/formats', fileTypes, function(data) {
 	    console.log('got data');
 	    console.log(data.split(','));
 	    showFormats(data.split(','));
 	});
     } else {
-	hideFormats();
+	resetFormats();
     }
     $('.delete-item').click(function() {
 	$(this).parent().remove();
 	if ($('.file-list').children().length === 0) {
 	    hideFiles();
-	    hideFormats();
+	    expandBrowse();
+	    resetFormats();
 	} else {
 	    var fileTypes = getCurrentFileTypes();
 	    $.post('/api/formats', fileTypes, function(data) {
@@ -118,7 +129,8 @@ function hideFiles() {
 function convertFilesTo(fileType) {
     console.log('converting files to ' + fileType);
     var data = new FormData();
-    data.append('file', files[0])
+    data.append('file', files[0]);
+    data.append('mime', fileType);
     jQuery.ajax({
 	url: '/api/convert',
 	data: data,
@@ -126,9 +138,11 @@ function convertFilesTo(fileType) {
 	contentType: false,
 	processData: false,
 	type: 'POST',
-	success: function(data){
-	    console.log(data);
-	}
+	success: function(fileUrl) {
+	    if (fileUrl != "ERR") {
+		window.location.href = fileUrl;
+	    }
+	} 
     }); 
 }
 
@@ -191,7 +205,8 @@ function stringToColor(str) {
     return colour;
 }
 
-function hideFormats() {
-    $('body > .bl > .quad-text').show();
-    $('.bl-menu').hide();
+function resetFormats() {
+    $.post('/api/formats', '', function(data) {
+	showFormats(data.split(','));
+    });
 }

@@ -172,6 +172,8 @@ nav a:hover {
 .bl { position: absolute; top: 50%; left: 0; right: 50%; bottom: 0; }
 .br { position: absolute; top: 50%; left: 50%; right: 0; bottom: 0; }
 .full { position:absolute; top: 0; left: 0; right: 0; bottom: 0; }
+.top-half { position: absolute; top: 0; left: 0; right: 0; bottom: 50%; }
+.bot-half { position: absolute; top: 50%; left: 0; right: 0; bottom: 0; }
 
 .tl-menu { 
     display: none;
@@ -201,7 +203,7 @@ nav a:hover {
 }
 
 .center {
-    width: 50%;
+    width: 35%;
     margin: 0 auto;
 }
 
@@ -225,7 +227,7 @@ nav a:hover {
 }
 
 .browse-options-text {
-    color: #eeeeee;
+    color: #bbb;
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     font-size: 12px;
@@ -368,7 +370,8 @@ ol.file-list {
     color: #eeeeee;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
-    font-size: 30px;
+    font-size: 24px;
+    text-align: center;
 }
 
 ol.file-list li.placeholder {
@@ -426,8 +429,8 @@ ol.file-list li.placeholder:before {
   position: relative;
   z-index: 2;
   opacity: 1;
-  padding-left: 35px;
-  padding-right: 35px;
+  padding-left: 31px;
+  padding-right: 31px;
 }
 
 .format-list li:hover:after {
