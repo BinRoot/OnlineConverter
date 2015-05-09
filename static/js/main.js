@@ -161,23 +161,6 @@ function convertFilesTo(fileType) {
 		window.location.href = xhr.responseText;
 	    }
 	}
-/*
-	jQuery.ajax({
-	    url: '/api/convert',
-	    headers: {"Content-Type": "multipart/form-data"}
-	    data: data,
-	    cache: false,
-	    contentType: false,
-	    processData: false,
-	    type: 'POST',
-	    success: function(fileUrl) {
-		if (fileUrl != "ERR") {
-//		    window.location.href = fileUrl;
-		    console.log(fileUrl)
-		}
-	    } 
-	}); 
-*/
     }
 }
 
