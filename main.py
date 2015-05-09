@@ -108,25 +108,48 @@ def getFormats(formats):
 
 @app.route('/api/convert', methods=['POST'])
 def convert():
-    file = request.files['file']
+    num_files = int(request.form['num'])
+    files = []
+    for i in range(0, num_files):
+        files.append(request.files['file-' + str(i)])
     to_mime = request.form['mime']
-    if file and to_mime:
-        from_mime = file.content_type;
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
-        command = formatMap[from_mime][to_mime]
-        app.logger.debug('from mime: ' + from_mime)
-        app.logger.debug('to mime: ' + to_mime)
-        app.logger.debug('command: ' + command)
 
-        timestamp = int(time.time())
-        filename_out = str(timestamp) + '_' + filename
-        call(['bash', '-c', 
-              command, 'ignore', 
-              app.config['UPLOAD_FOLDER'] + filename, 
-              app.config['CONVERT_FOLDER'] + filename_out])
-        return '/f/' + filename_out.split('.')[0]
+    app.logger.debug(str(files))
+    if num_files > 0 and to_mime:
+        filename_outs = []
+        for i in range(0, num_files):
+            from_mime = files[i].content_type;
+            filename = secure_filename(files[i].filename)
+            filepath = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'], filename)
+            files[i].save(filepath)
+            command = formatMap[from_mime][to_mime]
+            app.logger.debug('from mime: ' + from_mime)
+            app.logger.debug('to mime: ' + to_mime)
+            app.logger.debug('command: ' + command)
+            
+            timestamp = int(time.time())
+            filename_out = str(timestamp) + '_' + filename
+            call(['bash', '-c', 
+                  command, 'ignore', 
+                  app.config['UPLOAD_FOLDER'] + filename, 
+                  app.config['CONVERT_FOLDER'] + filename_out])
+            filename_outs.append(filename_out)
+        if len(filename_outs) == 1:
+            return '/f/' + filename_outs[0].split('.')[0]            
+        else:
+            timestamp = int(time.time())
+            zip_filename = str(timestamp) + '_' + to_mime.replace('/', '_') + '.zip'
+
+            real_filename_outs = []
+            for f_out in filename_outs:
+                real_f_out = [ fname for fname in os.listdir(app.config['CONVERT_FOLDER']) 
+                               if fname.startswith( f_out.split('.')[0] ) ]
+                real_filename_outs.append(real_f_out[0])
+
+            command_to_call = ['zip', app.config['CONVERT_FOLDER'] + zip_filename] + [ app.config['CONVERT_FOLDER'] + f_out for f_out in real_filename_outs ]
+            app.logger.debug(str(command_to_call))
+            call(command_to_call)
+            return '/f/' + zip_filename.split('.')[0]
 
 @app.route('/f/<filename>')
 def file_serve(filename):

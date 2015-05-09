@@ -8,7 +8,21 @@ $(function() {
 
     $('#file').change(function (e) {
 	if (e && e.target && e.target.files[0]) {
-	    files = e.target.files;
+	    for (var i = 0; i < e.target.files.length; i++) {
+		console.log('searching ' + e.target.files[i]);
+		var found = false;
+		for (var j = 0; j < files.length; j++) {
+		    if (files[j] == e.target.files[i]) {
+			found = true;
+			console.log('found ' + e.target.files[i]);
+			break;
+		    }
+		}
+		if (!found) {
+		    files.push(e.target.files[i])
+		    console.log('files is now ' + files);
+		}
+	    }
 	    showFiles(files);
 	    showBrowseOptionsAbridged();
 	}
@@ -75,6 +89,7 @@ function getCurrentFileTypes() {
 }
 
 function showFiles(files) {
+    $('.file-list').empty();
     $('body > .tr > .quad-text').hide();
     $('.tr-menu').show();
     for (var i = 0; i < files.length; i = i + 1) {
@@ -128,22 +143,42 @@ function hideFiles() {
 
 function convertFilesTo(fileType) {
     console.log('converting files to ' + fileType);
-    var data = new FormData();
-    data.append('file', files[0]);
-    data.append('mime', fileType);
-    jQuery.ajax({
-	url: '/api/convert',
-	data: data,
-	cache: false,
-	contentType: false,
-	processData: false,
-	type: 'POST',
-	success: function(fileUrl) {
-	    if (fileUrl != "ERR") {
-		window.location.href = fileUrl;
+    var num_files = files.length;
+
+    if (num_files > 0) {
+	var data = new FormData();    
+	data.append('num', num_files);
+	console.log('num files: ' + num_files)
+	for (var i = 0; i < num_files; i++)
+	    data.append('file-'+i, files[i]);	
+	data.append('mime', fileType);
+
+	var xhr = new XMLHttpRequest;
+	xhr.open('POST', '/api/convert', true);
+	xhr.send(data);
+	xhr.onreadystatechange = function() {
+	    if (xhr.readyState == 4 && xhr.status == 200) {
+		window.location.href = xhr.responseText;
 	    }
-	} 
-    }); 
+	}
+/*
+	jQuery.ajax({
+	    url: '/api/convert',
+	    headers: {"Content-Type": "multipart/form-data"}
+	    data: data,
+	    cache: false,
+	    contentType: false,
+	    processData: false,
+	    type: 'POST',
+	    success: function(fileUrl) {
+		if (fileUrl != "ERR") {
+//		    window.location.href = fileUrl;
+		    console.log(fileUrl)
+		}
+	    } 
+	}); 
+*/
+    }
 }
 
 function showFormats(formats) {

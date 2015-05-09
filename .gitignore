@@ -1,2 +1,4 @@
+files_in
+files_out
 venv
 *.pyc
