@@ -106,6 +106,25 @@ def getFormats(formats):
             
     return list(candidates)
 
+def generate_outputs(files, to_mime):
+    filename_outs = []
+    timestamp = int(time.time())
+    for i in range(0, len(files)):
+        from_mime = files[i].content_type;
+        filename = str(timestamp) + '_' + secure_filename(files[i].filename)
+        filepath = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'], filename)
+        files[i].save(filepath)
+        command = formatMap[from_mime][to_mime]
+        app.logger.debug('file: ' + filename)
+        app.logger.debug('from mime: ' + from_mime)
+        app.logger.debug('to mime: ' + to_mime)
+        app.logger.debug('command: ' + command)
+        call(['bash', '-c', 
+              command, 'ignore', 
+              app.config['UPLOAD_FOLDER'] + filename, 
+              app.config['CONVERT_FOLDER'] + filename])
+        filename_outs.append(filename)
+    return filename_outs
 
 @app.route('/api/convert', methods=['POST'])
 def convert():
@@ -117,24 +136,7 @@ def convert():
 
     app.logger.debug(str(files))
     if num_files > 0 and to_mime:
-        filename_outs = []
-        for i in range(0, num_files):
-            from_mime = files[i].content_type;
-            filename = secure_filename(files[i].filename)
-            filepath = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'], filename)
-            files[i].save(filepath)
-            command = formatMap[from_mime][to_mime]
-            app.logger.debug('from mime: ' + from_mime)
-            app.logger.debug('to mime: ' + to_mime)
-            app.logger.debug('command: ' + command)
-            
-            timestamp = int(time.time())
-            filename_out = str(timestamp) + '_' + filename
-            call(['bash', '-c', 
-                  command, 'ignore', 
-                  app.config['UPLOAD_FOLDER'] + filename, 
-                  app.config['CONVERT_FOLDER'] + filename_out])
-            filename_outs.append(filename_out)
+        filename_outs = generate_outputs(files, to_mime);
         if len(filename_outs) == 1:
             return '/f/' + filename_outs[0].split('.')[0]            
         else:

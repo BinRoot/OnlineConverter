@@ -29,7 +29,17 @@ $(function() {
 	return false;
     });
 
-    $("ol.file-list").sortable()
+    $("ol.file-list").sortable();
+
+
+    $(".meter > span").each(function() {
+	$(this)
+	    .data("origWidth", $(this).width())
+	    .width(0)
+	    .animate({
+		width: $(this).data("origWidth")
+	    }, 1200);
+    });
 });
 
 $('.browse-options-text').click(function () {
@@ -52,9 +62,12 @@ function showBrowseOptionsAbridged() {
 
 
 function squeezeBrowse() {
+    $('.meter').hide();
     $('.top-half').addClass('tl');
     $('.top-half').removeClass('top-half');
     $('.tr-menu').parent().show();
+    $('.tr-menu > .files-title').text('Files')
+    $('.file-list').show();
 }
 
 function expandBrowse() {
@@ -126,6 +139,9 @@ function showFiles(files) {
 	    resetFormats();
 	} else {
 	    var fileTypes = getCurrentFileTypes();
+
+	    // TODO: file removal is broken
+
 	    $.post('/api/formats', fileTypes, function(data) {
 		console.log('got data');
 		console.log(data.split(','));
@@ -154,11 +170,24 @@ function convertFilesTo(fileType) {
 	data.append('mime', fileType);
 
 	var xhr = new XMLHttpRequest;
+	$('.tr-menu > .files-title').text('Progress')
+	$('.file-list').hide();
+	$('.meter').show();
+
+	xhr.upload.addEventListener('progress', function(e) {
+	    console.log('progress');
+	    console.log(e);
+	    if (e.lengthComputable) {
+		var percent = (e.loaded / e.total) * 100;
+		$('.meter > span').css('width', percent + '%')
+	    }
+	});
 	xhr.open('POST', '/api/convert', true);
 	xhr.send(data);
-	xhr.onreadystatechange = function() {
-	    if (xhr.readyState == 4 && xhr.status == 200) {
-		window.location.href = xhr.responseText;
+	xhr.onreadystatechange = function(e) {
+	    if (this.readyState == 4 && this.status == 200) {
+		$('.progress-pie-chart').attr('data-percent', 100);
+		window.location.href = this.responseText;
 	    }
 	}
     }
