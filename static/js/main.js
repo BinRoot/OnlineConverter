@@ -173,7 +173,7 @@ function convertFilesTo(fileType) {
 	$('.tr-menu > .files-title').text('Progress')
 	$('.file-list').hide();
 	$('.meter').show();
-
+	$('.meter').removeClass('nostripes')
 	xhr.upload.addEventListener('progress', function(e) {
 	    console.log('progress');
 	    console.log(e);
@@ -186,7 +186,9 @@ function convertFilesTo(fileType) {
 	xhr.send(data);
 	xhr.onreadystatechange = function(e) {
 	    if (this.readyState == 4 && this.status == 200) {
-		$('.progress-pie-chart').attr('data-percent', 100);
+		$('.meter > span').css('width', '100%')
+		$('.meter').addClass('nostripes')
+		$('.tr-menu > .files-title').text('Done!')
 		window.location.href = this.responseText;
 	    }
 	}
