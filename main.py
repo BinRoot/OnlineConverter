@@ -65,7 +65,7 @@ for imgType1 in imgCircle:
     toBlocks = {}
     for imgType2 in imgCircle:
         if imgType2 == "application/pdf":
-            toBlocks[imgType2] = 'convert -page A4 -gravity center $1 ${2%.*}' + getFileExtension(imgType2)
+            toBlocks[imgType2] = 'convert -resize 565x800 -page A4 -gravity center $1 ${2%.*}' + getFileExtension(imgType2)
         else:
             toBlocks[imgType2] = 'convert $1 ${2%.*}' + getFileExtension(imgType2)
     formatMap[imgType1] = toBlocks
