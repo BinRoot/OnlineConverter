@@ -1,5 +1,34 @@
 var files = [];
 
+function insert_file(target_file) {
+    var found = false;
+    for (var j = 0; j < files.length; j++) {
+	if (files[j] == target_file) {
+	    found = true;
+	    break;
+	}
+    }
+    if (!found) {
+	files.push(target_file)
+	console.log('files is now ' + files);
+    } else {
+	console.log('not adding duplicate file');
+    }
+}
+
+function insert_files(target_files) {
+    for (var i = 0; i < target_files.length; i++) {
+	var target_file = target_files[i];
+	insert_file(target_file);
+    }
+}
+
+function insert_and_show_files(target_files) {
+    insert_files(target_files);
+    showFiles(files);
+    showBrowseOptionsAbridged();
+}
+
 $(function() {
 
     showUploadFiles();
@@ -8,29 +37,12 @@ $(function() {
 
     $('#file').change(function (e) {
 	if (e && e.target && e.target.files[0]) {
-	    for (var i = 0; i < e.target.files.length; i++) {
-		console.log('searching ' + e.target.files[i]);
-		var found = false;
-		for (var j = 0; j < files.length; j++) {
-		    if (files[j] == e.target.files[i]) {
-			found = true;
-			console.log('found ' + e.target.files[i]);
-			break;
-		    }
-		}
-		if (!found) {
-		    files.push(e.target.files[i])
-		    console.log('files is now ' + files);
-		}
-	    }
-	    showFiles(files);
-	    showBrowseOptionsAbridged();
+	    insert_and_show_files(e.target.files);
 	}
 	return false;
     });
 
     $("ol.file-list").sortable();
-
 
     $(".meter > span").each(function() {
 	$(this)
@@ -42,9 +54,57 @@ $(function() {
     });
 });
 
+$('body').on('dragenter', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    console.log('drag enter');
+    console.log($('.tl-menu > .full').length);
+    if ($('.tl-menu > .full').length) {
+	console.log('full');
+	$('.tl-menu > .full').addClass('green');
+	$('.tl-menu > .full').removeClass('black1');
+    } else {
+	console.log('bl');
+	$('.tl-menu > .bl').addClass('green');
+	$('.tl-menu > .bl').removeClass('black3');
+    }
+});
+
+$('body').on('dragover', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+});
+
+$('body').on('drop', function (e) {
+    if ($('.tl-menu > .full').length) {
+	$('.tl-menu > .full').addClass('black1');
+	$('.tl-menu > .full').removeClass('green');
+    } else {
+	$('.tl-menu > .bl').addClass('black3');
+	$('.tl-menu > .bl').removeClass('green');
+    }
+
+    e.preventDefault();
+    var target_files = e.originalEvent.dataTransfer.files;
+    insert_and_show_files(target_files);
+});
+
 $('.browse-options-text').click(function () {
     showBrowseOptions();
     return false; 
+});
+
+$(document).on('dragenter', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+});
+$(document).on('dragover', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+});
+$(document).on('drop', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
 });
 
 function showBrowseOptions() {
