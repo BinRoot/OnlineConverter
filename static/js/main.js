@@ -1,4 +1,14 @@
 var files = [];
+var intension = undefined;
+
+function remove_file(filename) {
+    for (var j = 0; j < files.length; j++) {
+	if (files[j].name == filename) {
+	    files.splice(j, 1);
+	    break;
+	}
+    }
+}
 
 function insert_file(target_file) {
     var found = false;
@@ -38,6 +48,10 @@ $(function() {
     $('#file').change(function (e) {
 	if (e && e.target && e.target.files[0]) {
 	    insert_and_show_files(e.target.files);
+	    if (intension) {
+		convertFilesTo(intension);
+		intension = undefined;
+	    }
 	}
 	return false;
     });
@@ -86,12 +100,17 @@ $('body').on('drop', function (e) {
 
     e.preventDefault();
     var target_files = e.originalEvent.dataTransfer.files;
+    console.log(e.originalEvent.dataTransfer);
     insert_and_show_files(target_files);
 });
 
-$('.browse-options-text').click(function () {
-    showBrowseOptions();
-    return false; 
+$('.body').on('paste', function(e) {
+    console.log(e);
+    for (var i = 0; i < e.clipboardData.items.length; i++) {
+        var item = e.clipboardData.items[i];
+        console.log("Item: " + item.type);
+	var file = item.getAsFile();
+    }
 });
 
 $(document).on('dragenter', function (e) {
@@ -105,6 +124,11 @@ $(document).on('dragover', function (e) {
 $(document).on('drop', function (e) {
     e.stopPropagation();
     e.preventDefault();
+});
+
+$('.browse-options-text').click(function () {
+    showBrowseOptions();
+    return false; 
 });
 
 function showBrowseOptions() {
@@ -136,6 +160,7 @@ function expandBrowse() {
 }
 
 $('.button2').click(function() {
+    intension = undefined;
     $('#file').click();
     return false;
 });
@@ -205,9 +230,11 @@ function showFiles(files) {
 	    expandBrowse();
 	    resetFormats();
 	} else {
-	    var fileTypes = getCurrentFileTypes();
-
 	    // TODO: file removal is broken
+	    var filename_to_delete = $(this).parent().text().substring(2);
+	    remove_file(filename_to_delete);
+
+	    var fileTypes = getCurrentFileTypes();
 
 	    $.post('/api/formats', fileTypes, function(data) {
 		console.log('got data');
@@ -240,6 +267,10 @@ function convertFilesTo(fileType) {
 	$('.tr-menu > .files-title').text('Progress')
 	$('.file-list').hide();
 	$('.meter').show();
+	var height = $('.tr-menu').height();
+	var title_height = $('.tr-menu > .files-title').height();
+	console.log('height: ' + height + ', title_height: ' + title_height);
+	$('.meter').css('margin-top', height/2 - $('.meter').height()/2 - title_height)
 	$('.meter').removeClass('nostripes')
 	xhr.upload.addEventListener('progress', function(e) {
 	    console.log('progress');
@@ -277,6 +308,8 @@ function showFormats(formats) {
 	    name = 'PCX';
 	} else if (name === 'X-ICON') {
 	    name = 'ICO'
+	} else if (name === 'X-RGB') {
+	    name = 'RGB'
 	}
 	
 	var li = '<li filetype="' + format + 
@@ -287,7 +320,12 @@ function showFormats(formats) {
     }
     $('.format-list > li').click(function () {
 	var fileType = $(this).attr('filetype');
-	convertFilesTo(fileType)
+	if (files.length == 0) {
+	    intension = fileType;
+	    $('#file').click();
+	} else {
+	    convertFilesTo(fileType)
+	}
     });
 }
 
