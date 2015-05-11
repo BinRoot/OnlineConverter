@@ -94,10 +94,16 @@ function hideUploadFiles() {
 function getCurrentFileTypes() {
     var fileTypes = '';
     var lis = $('.file-list > li');
-    for (var i = 0; i < lis.length; i = i+1) {
-	fileTypes = fileTypes + (lis.attr('filetype')) + ',';
+    for (var i = 0; i < lis.length; i++) {
+	if ($(lis[i]).attr('filetype') == '') {
+	    fileTypes = fileTypes + 'ERR,';
+	} else {
+	    fileTypes = fileTypes + ($(lis[i]).attr('filetype')) + ',';	    
+	}
     }
-    fileTypes = fileTypes.slice(0,-1);
+    if (fileTypes.length > 1) { 
+	fileTypes = fileTypes.slice(0,-1);
+    }
     return fileTypes;
 }
 
@@ -119,9 +125,10 @@ function showFiles(files) {
 			       files[i].type + '">' + delElem + 
 			       imgElem + files[i].name + '</li>');
     }
+    console.log('getCurrentFileTypes')
     var fileTypes = getCurrentFileTypes();
+    console.log(fileTypes)
     if (files.length > 0) {
-	console.log(fileTypes);
 	squeezeBrowse();
 	$.post('/api/formats', fileTypes, function(data) {
 	    console.log('got data');

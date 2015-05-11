@@ -64,11 +64,10 @@ def getFileExtension(imgType):
 for imgType1 in imgCircle:
     toBlocks = {}
     for imgType2 in imgCircle:
-        if imgType1 != imgType2:
-            if imgType2 == "application/pdf":
-                toBlocks[imgType2] = 'convert -page A4 -gravity center $1 ${2%.*}' + getFileExtension(imgType2)
-            else:
-                toBlocks[imgType2] = 'convert $1 ${2%.*}' + getFileExtension(imgType2)
+        if imgType2 == "application/pdf":
+            toBlocks[imgType2] = 'convert -page A4 -gravity center $1 ${2%.*}' + getFileExtension(imgType2)
+        else:
+            toBlocks[imgType2] = 'convert $1 ${2%.*}' + getFileExtension(imgType2)
     formatMap[imgType1] = toBlocks
 
 
@@ -81,7 +80,9 @@ def formats():
     raw_data = request.get_data()
     raw_data = urllib.unquote(raw_data).decode('utf8') 
     formats_in = raw_data.split(',')
+    app.logger.debug('formats_in: ' + str(formats_in));
     formats_out = getFormats(formats_in)
+    app.logger.debug('formats_out: ' + str(formats_out));
     f_str = ""
     for f in formats_out:
         f_str += f + ","
@@ -97,14 +98,19 @@ def allCandidates():
 
 def getFormats(formats):
     candidates = allCandidates()
+    if formats == ['']:
+        return list(candidates)
     for f in formats:
         if f in formatMap:
             possible = Set([])
             for k, v in formatMap[f].iteritems():
                 possible.add(k)
             candidates &= possible
-            
+        else:
+            candidates &= Set([])
+            break
     return list(candidates)
+
 
 def generate_outputs(files, to_mime):
     filename_outs = []
