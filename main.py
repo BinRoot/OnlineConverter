@@ -70,6 +70,7 @@ for imgType1 in imgCircle:
             toBlocks[imgType2] = 'convert $1 ${2%.*}' + getFileExtension(imgType2)
     formatMap[imgType1] = toBlocks
 
+formatMap['application/pdf']['application/pdf-merge'] = 'gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=$1 $2'
 
 @app.route('/')
 def index():
@@ -115,21 +116,43 @@ def getFormats(formats):
 def generate_outputs(files, to_mime):
     filename_outs = []
     timestamp = int(time.time())
-    for i in range(0, len(files)):
-        from_mime = files[i].content_type;
-        filename = str(timestamp) + '_' + secure_filename(files[i].filename)
-        filepath = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'], filename)
-        files[i].save(filepath)
-        command = formatMap[from_mime][to_mime]
-        app.logger.debug('file: ' + filename)
-        app.logger.debug('from mime: ' + from_mime)
+    if to_mime.endswith('-merge'):
+        split = to_mime.split('-')
+        split.pop()
+        to_mime_actual = '-'.join(split)
+        command = formatMap[to_mime_actual][to_mime]
         app.logger.debug('to mime: ' + to_mime)
         app.logger.debug('command: ' + command)
-        call(['bash', '-c', 
-              command, 'ignore', 
-              app.config['UPLOAD_FOLDER'] + filename, 
-              app.config['CONVERT_FOLDER'] + filename])
+        filename = str(timestamp) + '_merged_' + secure_filename(files[0].filename)
+        filepath = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'], filename)
+        in_filenames = ''
+        for f in files:
+            in_filename = app.config['UPLOAD_FOLDER'] + f.filename
+            f.save(in_filename)
+            in_filenames = in_filenames + in_filename + ' '
+        command_to_call = ['bash', '-c', 
+                           command, 'ignore',
+                           app.config['CONVERT_FOLDER'] + filename, 
+                           in_filenames]
+        app.logger.debug(command_to_call)
+        call(command_to_call)
         filename_outs.append(filename)
+    else:
+        for i in range(0, len(files)):
+            from_mime = files[i].content_type;
+            filename = str(timestamp) + '_' + secure_filename(files[i].filename)
+            filepath = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'], filename)
+            files[i].save(filepath)
+            command = formatMap[from_mime][to_mime]
+            app.logger.debug('file: ' + filename)
+            app.logger.debug('from mime: ' + from_mime)
+            app.logger.debug('to mime: ' + to_mime)
+            app.logger.debug('command: ' + command)
+            call(['bash', '-c', 
+                  command, 'ignore', 
+                  app.config['UPLOAD_FOLDER'] + filename, 
+                  app.config['CONVERT_FOLDER'] + filename])
+            filename_outs.append(filename)
     return filename_outs
 
 @app.route('/api/convert', methods=['POST'])
@@ -139,7 +162,6 @@ def convert():
     for i in range(0, num_files):
         files.append(request.files['file-' + str(i)])
     to_mime = request.form['mime']
-
     app.logger.debug(str(files))
     if num_files > 0 and to_mime:
         filename_outs = generate_outputs(files, to_mime);
