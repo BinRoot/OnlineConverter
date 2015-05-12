@@ -214,3 +214,8 @@ def spy_delete():
     shutil.rmtree(app.config['CONVERT_FOLDER'])
     os.mkdir(app.config['CONVERT_FOLDER'])
     return redirect('/spy')
+
+@app.route('/googlec945ae41566fdb2b.html')
+def google_webtools():
+    return app.send_static_file('googlec945ae41566fdb2b.html')
+    
