@@ -71,9 +71,11 @@ for imgType1 in imgCircle:
     formatMap[imgType1] = toBlocks
 
 formatMap['application/pdf']['application/pdf-merge'] = 'gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=$1 $2'
+formatMap['application/pdf']['text/plain'] = 'pdftotext $1 ${2%.*}.txt'
 
 formatMap['application/vnd.openxmlformats-officedocument.wordprocessingml.document'] = {}
 formatMap['application/vnd.openxmlformats-officedocument.wordprocessingml.document']['application/pdf'] = 'doc2pdf -o ${2%.*}.pdf $1'
+
 
 @app.route('/')
 def index():

@@ -310,6 +310,8 @@ function showFormats(formats) {
 	    name = 'ICO'
 	} else if (name === 'X-RGB') {
 	    name = 'RGB'
+	} else if (name === 'PLAIN') {
+	    name = 'TXT'
 	}
 	
 	var li = '<li filetype="' + format + 
