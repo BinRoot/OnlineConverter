@@ -312,6 +312,8 @@ function showFormats(formats) {
 	    name = 'RGB'
 	} else if (name === 'PLAIN') {
 	    name = 'TXT'
+	} else if (name === 'VND.OASIS.OPENDOCUMENT.TEXT') {
+	    name = 'ODT'
 	}
 	
 	var li = '<li filetype="' + format + 
