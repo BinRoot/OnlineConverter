@@ -10,6 +10,7 @@ from subprocess import call
 from sets import Set
 from werkzeug import secure_filename
 import mimetypes
+import shutil
 mimetypes.init()
 
 app = Flask(__name__)
@@ -199,3 +200,17 @@ def file_serve(filename):
     filename_out = prefixed[0][ts_length:]
     response.headers['Content-Disposition']  = 'attachment; filename=' + filename_out
     return response
+
+@app.route('/spy')
+def spy():
+    html = '<html><body>'
+    for fname in os.listdir(app.config['CONVERT_FOLDER']):
+        html = html + '<a href="/f/' + fname.split('.')[0] + '">' + fname + '</a><br>'
+    html = html + '</body></html>'
+    return html
+
+@app.route('/spy/delete')
+def spy_delete():
+    shutil.rmtree(app.config['CONVERT_FOLDER'])
+    os.mkdir(app.config['CONVERT_FOLDER'])
+    return redirect('/spy')
