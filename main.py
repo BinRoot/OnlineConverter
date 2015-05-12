@@ -72,6 +72,9 @@ for imgType1 in imgCircle:
 
 formatMap['application/pdf']['application/pdf-merge'] = 'gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=$1 $2'
 
+formatMap['application/vnd.openxmlformats-officedocument.wordprocessingml.document'] = {}
+formatMap['application/vnd.openxmlformats-officedocument.wordprocessingml.document']['application/pdf'] = 'doc2pdf -o ${2%.*}.pdf $1'
+
 @app.route('/')
 def index():
     return app.send_static_file('index.html')
