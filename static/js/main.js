@@ -314,6 +314,8 @@ function showFormats(formats) {
 	    name = 'TXT'
 	} else if (name === 'VND.OASIS.OPENDOCUMENT.TEXT') {
 	    name = 'ODT'
+	} else if (name === 'VND.OASIS.OPENDOCUMENT.TEXT') {
+	    name = 'ODS'
 	}
 	
 	var li = '<li filetype="' + format + 
