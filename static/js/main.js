@@ -314,7 +314,7 @@ function showFormats(formats) {
 	    name = 'TXT'
 	} else if (name === 'VND.OASIS.OPENDOCUMENT.TEXT') {
 	    name = 'ODT'
-	} else if (name === 'VND.OASIS.OPENDOCUMENT.TEXT') {
+	} else if (name === 'VND.OASIS.OPENDOCUMENT.SPREADSHEET') {
 	    name = 'ODS'
 	}
 	
